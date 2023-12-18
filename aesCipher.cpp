@@ -57,21 +57,30 @@ std::string encrypt(std::string plainText, std::string key, keyLength turns) {
         case AES_256: subSize = 60; genStart = 8; break;
     }
 
-    uint8_t **extendedKey = new uint8_t *[4];
+    uint8_t **extendedKey = new uint8_t*[4];
     for (uint8_t i = 0; i < 4; i++) {
         extendedKey[i] = new uint8_t[subSize];
     }
 
-
-    for (uint8_t i = genStart; i < subSize; i++)
-        generateKeyWord(i, extendedKey, genStart);
-
-
     stringKeyToMatrixKey(key, extendedKey, genStart);
+
+    if (genStart == 8) {
+        for (uint8_t i = genStart; i < subSize; i++) {
+            generateKeyWord256(i, extendedKey, genStart);
+        }
+    }
+    else {
+        for (uint8_t i = genStart; i < subSize; i++) {
+            generateKeyWord(i, extendedKey, genStart);
+        }
+    }
+
+
     for (int i = 0; i < subSize; i++) {
         for (int j = 0; j < 4; j++) {
-            std::cout << std::hex << (int)extendedKey[j][i];
+            std::cout << std::hex << (int)extendedKey[j][i] << " ";
         }
+        std::cout << " ";
     }
     std::cout << "\n";
 

@@ -36,37 +36,112 @@ void stringKeyToMatrixKey(std::string key, uint8_t **keys, uint8_t genStart) {
     }
 }
 
-void generateKeyWord(int wordIndex, uint8_t **keys, uint8_t fpk){
-    uint32_t i_4 = wordIndex - fpk, i_1 = wordIndex - 1;
+void rotWord(uint8_t word[4]) {
+    uint8_t tmp = word[0];
+    word[0] = word[1];
+    word[1] = word[2];
+    word[2] = word[3];
+    word[3] = tmp;
+}
+
+void generateKeyWord(int wordIndex, uint8_t **keys, uint8_t n) {
     uint8_t word[4] = { 0, 0, 0, 0 };
+    uint8_t word_1[4] = {
+        keys[0][wordIndex - 1],
+        keys[1][wordIndex - 1],
+        keys[2][wordIndex - 1],
+        keys[3][wordIndex - 1]
+    };
 
+    if (wordIndex % n == 0) {
+        
+        rotWord(word_1);
+        word[0] = keys[0][wordIndex - n] ^ S_BOX[word_1[0]] ^ RC[(int)(wordIndex / n) - 1];
+        word[1] = keys[1][wordIndex - n] ^ S_BOX[word_1[1]];
+        word[2] = keys[2][wordIndex - n] ^ S_BOX[word_1[2]];
+        word[3] = keys[3][wordIndex - n] ^ S_BOX[word_1[3]];
 
-    if (wordIndex % fpk == 0){
-        word[0] = keys[1][i_1];
-        word[1] = keys[2][i_1];
-        word[2] = keys[3][i_1];
-        word[3] = keys[0][i_1];
-
-        for (uint8_t i = 0; i < 4; i++){
-            word[i] = S_BOX[word[i]];
-        }
-
-        word[0] ^= RC[(wordIndex / fpk) - 1];
     }
     else {
         for (uint8_t i = 0; i < 4; i++) {
-            word[i] = keys[i][i_1];
+            word[i] = keys[i][wordIndex - n] ^ word_1[i];
         }
     }
 
-    for (uint8_t i = 0; i < 4; i++) {
-        word[i] ^= keys[i][i_4];
+    keys[0][wordIndex] = word[0];
+    keys[1][wordIndex] = word[1];
+    keys[2][wordIndex] = word[2];
+    keys[3][wordIndex] = word[3];
+}
+
+void generateKeyWord256(int wordIndex, uint8_t **keys, uint8_t n) {
+    uint8_t word[4] = { 0, 0, 0, 0 };
+    uint8_t word_1[4] = {
+        keys[0][wordIndex - 1],
+        keys[1][wordIndex - 1],
+        keys[2][wordIndex - 1],
+        keys[3][wordIndex - 1]
+    };
+
+    if (wordIndex % n == 0) {
+        
+        rotWord(word_1);
+            word[0] = keys[0][wordIndex - n] ^ S_BOX[word_1[0]] ^ RC[(int)(wordIndex / n) - 1];
+            word[1] = keys[1][wordIndex - n] ^ S_BOX[word_1[1]];
+            word[2] = keys[2][wordIndex - n] ^ S_BOX[word_1[2]];
+            word[3] = keys[3][wordIndex - n] ^ S_BOX[word_1[3]];
+
+    }
+    else if (wordIndex % n == 4) {
+        for (uint8_t i = 0; i < 4; i++) {
+            word[i] = word_1[i] ^ S_BOX[word_1[i]];
+        }
+    }
+    else {
+        for (uint8_t i = 0; i < 4; i++) {
+            word[i] = keys[i][wordIndex - n] ^ word_1[i];
+        }
     }
 
-    for (uint8_t i = 0; i < 4; i++) {
-        keys[i][wordIndex] = word[i];
-    }
+    keys[0][wordIndex] = word[0];
+    keys[1][wordIndex] = word[1];
+    keys[2][wordIndex] = word[2];
+    keys[3][wordIndex] = word[3];
 }
+
+
+
+// void generateKeyWord(int wordIndex, uint8_t **keys, uint8_t fpk){
+//     uint32_t i_4 = wordIndex - fpk, i_1 = wordIndex - 1;
+//     uint8_t word[4] = { 0, 0, 0, 0 };
+
+
+//     if (wordIndex % fpk == 0){
+//         word[0] = keys[1][i_1];
+//         word[1] = keys[2][i_1];
+//         word[2] = keys[3][i_1];
+//         word[3] = keys[0][i_1];
+
+//         for (uint8_t i = 0; i < 4; i++) {
+//             word[i] = S_BOX[word[i]];
+//         }
+
+//         word[0] ^= RC[(wordIndex / fpk) - 1];
+//     }
+//     else {
+//         for (uint8_t i = 0; i < 4; i++) {
+//             word[i] = keys[i][i_1];
+//         }
+//     }
+
+//     for (uint8_t i = 0; i < 4; i++) {
+//         word[i] ^= keys[i][i_4];
+//     }
+
+//     for (uint8_t i = 0; i < 4; i++) {
+//         keys[i][wordIndex] = word[i];
+//     }
+// }
 
 void addKeyToBlock(std::size_t blockIndex, uint8_t roundKeyNumber, uint8_t ***matrix, uint8_t **keys){
     for(uint8_t i = 0; i < 4; i++){
