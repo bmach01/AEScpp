@@ -27,6 +27,9 @@ namespace aes {
     // Common
     void mixColumns(uint8_t ***matrix, std::size_t blockIndex, const uint8_t mixMatrix[4][4]);
     void generateKeyWord(int wordIndex, uint8_t **keyMatrix, uint8_t fpk);
+    
+    void generateKeyWord256(int wordIndex, uint8_t **keyMatrix, uint8_t fpk);
+
     void addKeyToBlock(std::size_t blockIndex, uint8_t roundKeyNumber, uint8_t ***matrix, uint8_t **keys);
     void splitToBlocks(std::string text, std::size_t length, uint8_t ***matrix, std::size_t numberOfBlocks);
     void stringKeyToMatrixKey(std::string key, uint8_t **keyMatrix, uint8_t genStart);
