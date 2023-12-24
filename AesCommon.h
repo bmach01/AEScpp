@@ -1,11 +1,9 @@
 #pragma once
-#include <stdint.h>
 #include <string>
 #include <sstream>
 #include <math.h>
-#include <stdint.h>
 
-#include "aesLookup.hpp"
+#include "AesLookup.hpp"
 
 enum keyLength {
     AES_128 = 10,
