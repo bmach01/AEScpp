@@ -76,7 +76,7 @@ std::string decrypt(std::string cipher, std::string key, keyLength turns) {
         for (uint8_t j = 1; j < turns; j++) {
             invShiftRows(textBlocks, i);
             invSubBytes(textBlocks, i);
-            addKeyToBlock(i, 10 - j, textBlocks, extendedKey);
+            addKeyToBlock(i, turns - j, textBlocks, extendedKey);
             mixColumns(textBlocks, i, INV_MIX_MATRIX);
         }
 
