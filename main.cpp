@@ -2,9 +2,8 @@
 #include <math.h>
 #include <iomanip>
 
-//#include "aesTests.hpp"
-#include "aes.h"
-
+#include "AesEncrypter.h"
+#include "AesDecrypter.h"
 
 std::string hexStringToChars(const std::string& hexString) {
     if (hexString.length() % 2 != 0)
@@ -26,24 +25,21 @@ std::string hexStringToChars(const std::string& hexString) {
 
 
 int main() {
-    std::string plainText = "Pozdrawiamy Pana Banasika";
+    std::string plainText = "Lorem ipsum sit dolor et amet???";
     std::string keyString128 = "00000000000000000000000000000000";
     std::string keyString192 = "000000000000000000000000000000000000000000000000";
     std::string keyString256 = "0000000000000000000000000000000000000000000000000000000000000000";
 
-    std::string keyString = keyString256;
+    AesEncrypter encrypter(keyLength::AES_256);
+    AesDecrypter decrypter(keyLength::AES_256);
 
-    std::cout << "Plain text: " << plainText << "\n";
+    std::cout << "plain text: " << plainText << "\n";
 
-    std::string cipherText = aes::encrypt(plainText, keyString, aes::AES_256);
+    std::string cipherText = encrypter.encrypt(plainText, keyString256);
+    std::cout << "cipher text: " << cipherText << "\n";
 
-    std::cout << "Cipher text: " << cipherText << "\n";
-
-   std::string decoded = aes::decrypt(cipherText, keyString, aes::AES_256);
-
-    std::cout << "Decoded text: " << decoded << "\n";
-
-
+    std::string decryptedText = decrypter.decrypt(cipherText, keyString256);
+    std::cout << "decrypted: " << decryptedText;
 
     return 0;
 }
