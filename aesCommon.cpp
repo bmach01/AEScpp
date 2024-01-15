@@ -77,8 +77,7 @@ void AesCommon::mixColumns(std::size_t blockIndex) {
         for (uint8_t j = 0; j < 4; j++) {
             output[i][j] = 0;
             for (uint8_t k = 0; k < 4; k++) {
-                //output[i][j] ^= GFMUL_LOOKUP[MIX_MATRIX[i][k]][matrix[blockIndex][k][j]];
-                output[i][j] ^= gfmul(pMixMatrix[i][k], matrix[blockIndex][k][j]);
+                output[i][j] ^= GFMUL_LOOKUP[pMixMatrix[i][k]][matrix[blockIndex][k][j]];
             }
         }
     }
